@@ -1,0 +1,3017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEATPLAY</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #8a63ff;
+            --secondary-color: #b399ff;
+            --background-color: #f8f5ff;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --hover-color: #7b4dff;
+            --favorite-color: #ff6b6b;
+            --history-color: #4dabf7;
+            --member-color: #ff85a2;
+            --trending-color: #ff9e4a;
+            --album-color: #6bd1c7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background-image 0.5s ease;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+
+        body.artist-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), var(--artist-bg-image);
+        }
+
+        .overlay {
+            background-color: rgba(248, 245, 255, 0.9);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 2.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        /* Search Bar */
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: none;
+            font-size: 1rem;
+            box-shadow: 0 5px 20px rgba(138, 99, 255, 0.1);
+            transition: all 0.3s ease;
+            padding-left: 50px;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            box-shadow: 0 5px 25px rgba(138, 99, 255, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .search-result-item:hover {
+            background-color: #f8f5ff;
+        }
+
+        .search-result-item img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .search-result-info h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--text-color);
+        }
+
+        .search-result-info p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .search-result-type {
+            margin-left: auto;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        .tabs-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 15px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(138, 99, 255, 0.1);
+        }
+
+        .tab-button {
+            padding: 12px 30px;
+            background-color: transparent;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-button i {
+            font-size: 1.1rem;
+        }
+
+        .tab-button:hover {
+            color: var(--primary-color);
+        }
+
+        .tab-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 5px 15px rgba(138, 99, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Trending Section */
+        .trending-section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--trending-color);
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .trending-card {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .trending-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(138, 99, 255, 0.2);
+        }
+
+        .trending-rank {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 30px;
+            height: 30px;
+            background-color: var(--trending-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 2;
+        }
+
+        .trending-rank.rank-1 {
+            background-color: #ffd700;
+            width: 36px;
+            height: 36px;
+            font-size: 1.1rem;
+        }
+
+        .trending-rank.rank-2 {
+            background-color: #c0c0c0;
+            width: 34px;
+            height: 34px;
+        }
+
+        .trending-rank.rank-3 {
+            background-color: #cd7f32;
+            width: 32px;
+            height: 32px;
+        }
+
+        .trending-thumbnail {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            overflow: hidden;
+        }
+
+        .trending-thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trending-info {
+            padding: 15px;
+        }
+
+        .trending-title {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--text-color);
+            font-weight: 500;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .trending-artist {
+            font-size: 0.9rem;
+            color: #666;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .trending-stats {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .trending-stats i {
+            margin-right: 5px;
+            color: var(--trending-color);
+        }
+
+        /* Artist Grid */
+        .artist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .artist-card {
+            background-color: var(--card-color);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .artist-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(138, 99, 255, 0.2);
+        }
+
+        .artist-image-container {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .artist-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .artist-card:hover .artist-image {
+            transform: scale(1.1);
+        }
+
+        .artist-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .artist-name {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .artist-genre {
+            font-size: 0.95rem;
+            color: #888;
+            font-weight: 400;
+        }
+
+        /* Artist Detail Section */
+        .artist-detail {
+            display: none;
+            margin-bottom: 30px;
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .artist-detail.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .artist-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 30px;
+        }
+
+        .artist-detail-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--primary-color);
+        }
+
+        .artist-detail-info {
+            flex: 1;
+        }
+
+        .artist-detail-name {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .artist-detail-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            color: #555;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-link.instagram { color: #e1306c; }
+        .social-link.twitter { color: #1da1f2; }
+        .social-link.tiktok { color: #000000; }
+        .social-link.youtube { color: #ff0000; }
+
+        /* Navigation Tabs for Artist Detail */
+        .artist-nav-tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .artist-nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .artist-nav-tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .artist-nav-tab i {
+            margin-right: 8px;
+        }
+
+        /* Members Section */
+        .members-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .members-section.active {
+            display: block;
+        }
+
+        .members-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .member-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            padding-bottom: 15px;
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 133, 162, 0.2);
+        }
+
+        .member-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .member-name {
+            font-size: 1.1rem;
+            color: var(--member-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .member-position {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* Member Detail Section */
+        .member-detail {
+            display: none;
+            background-color: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        .member-detail.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .member-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 30px;
+        }
+
+        .member-detail-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid var(--member-color);
+        }
+
+        .member-detail-info {
+            flex: 1;
+        }
+
+        .member-detail-name {
+            font-size: 1.8rem;
+            color: var(--member-color);
+            margin-bottom: 10px;
+        }
+
+        .member-detail-position {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .member-detail-bio {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        .back-to-artist {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 8px 20px;
+            background-color: var(--member-color);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-artist:hover {
+            background-color: #ff6b8b;
+            transform: translateY(-2px);
+        }
+
+        /* Album Gallery Section */
+        .album-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .album-section.active {
+            display: block;
+        }
+
+        .album-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .album-card {
+            background-color: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .album-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(107, 209, 199, 0.2);
+        }
+
+        .album-image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .album-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .album-card:hover .album-image {
+            transform: scale(1.05);
+        }
+
+        .album-info {
+            padding: 15px;
+            position: relative;
+        }
+
+        .album-name {
+            font-size: 1rem;
+            color: var(--text-color);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .album-date {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .album-like-btn {
+            position: absolute;
+            top: -25px;
+            right: 15px;
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: #aaa;
+        }
+
+        .album-like-btn:hover {
+            color: var(--favorite-color);
+            transform: scale(1.1);
+        }
+
+        .album-like-btn.liked {
+            color: var(--favorite-color);
+        }
+
+        /* Album Photo Modal */
+        .album-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .album-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+
+        .modal-like {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #aaa;
+        }
+
+        .modal-like.liked {
+            color: var(--favorite-color);
+        }
+
+        /* Videos Section */
+        .videos-section {
+            margin-top: 40px;
+        }
+
+        .videos-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .videos-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .video-card {
+            background-color: var(--card-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(138, 99, 255, 0.15);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            overflow: hidden;
+        }
+
+        .thumbnail-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .play-button i {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-left: 5px;
+        }
+
+        .video-thumbnail:hover .play-button {
+            opacity: 1;
+        }
+
+        .video-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: none;
+        }
+
+        .video-info {
+            padding: 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-text {
+            flex: 1;
+        }
+
+        .video-title {
+            font-size: 1.05rem;
+            margin-bottom: 3px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .video-artist {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #aaa;
+            transition: all 0.2s ease;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .favorite-btn:hover {
+            color: var(--favorite-color);
+            background-color: rgba(255, 107, 107, 0.1);
+        }
+
+        .favorite-btn.favorited {
+            color: var(--favorite-color);
+        }
+
+        /* Back Buttons */
+        .back-button {
+            display: block;
+            margin: 30px auto;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(138, 99, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-button:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(138, 99, 255, 0.4);
+        }
+
+        .back-button.top {
+            margin: 0 0 20px 0;
+            padding: 8px 20px;
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            box-shadow: none;
+        }
+
+        .back-button.top:hover {
+            background-color: #e0e0e0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #888;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .trending-grid,
+            .artist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            
+            .artist-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .artist-detail-image {
+                margin-bottom: 20px;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+            
+            .videos-container {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+            
+            .album-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .search-bar {
+                padding: 12px 20px 12px 45px;
+            }
+            
+            .tabs-container {
+                padding: 10px;
+                border-radius: 30px;
+            }
+            
+            .tab-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            
+            .trending-grid,
+            .artist-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .artist-image-container {
+                height: 220px;
+            }
+            
+            .members-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .member-image {
+                height: 150px;
+            }
+            
+            .videos-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .member-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .album-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            }
+            
+            .album-image-container {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .trending-grid,
+            .artist-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .artist-image-container {
+                height: 180px;
+            }
+            
+            .artist-name {
+                font-size: 1.1rem;
+            }
+            
+            .artist-detail {
+                padding: 20px;
+            }
+            
+            .members-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .album-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="container">
+            <h1>Beatplay</h1>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-bar" placeholder="Search for artists, songs, or videos...">
+                <div class="search-results"></div>
+            </div>
+            
+            <div class="tabs-container">
+                <button class="tab-button active" data-tab="main">
+                    <i class="fas fa-home"></i> Main
+                </button>
+                <button class="tab-button" data-tab="favorites">
+                    <i class="fas fa-heart"></i> Favorites
+                </button>
+                <button class="tab-button" data-tab="history">
+                    <i class="fas fa-history"></i> History
+                </button>
+            </div>
+            
+            <!-- Main Tab -->
+            <div id="main" class="tab-content active">
+                <!-- Trending Section -->
+                <div class="trending-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-fire"></i> Trending Videos
+                    </h2>
+                    <div id="trending-container" class="trending-grid">
+                        <!-- Will be populated by JavaScript -->
+                    </div>
+                </div>
+                
+                <!-- Artists Section -->
+                <h2 class="section-title">
+                    <i class="fas fa-users"></i> Artists & Groups
+                </h2>
+                <div class="artist-grid">
+                    <!-- NewJeans -->
+                    <div class="artist-card" data-artist="newjeans" 
+                        data-image="ab6761610000517480668ba2b15094d083780ea9.jpg"
+                        data-bg-image="https://wallpapercave.com/wp/wp11752709.jpg"
+                        data-videos='[
+                        {"title": "Attention", "id": "c6URxEZbJP4", "type": "MV"},
+                        {"title": "Cookie", "id": "2AgpBwagplU", "type": "MV"},
+                        {"title": "Hype Boy", "id": "5sp_qdC3_dg", "type": "MV"},
+                        {"title": "Hurt", "id": "4SjJzU05Qjc", "type": "MV"},
+                        {"title": "OMG", "id": "7b2Nbr34BW4", "type": "MV"},
+                        {"title": "Asap", "id": "GgU-q_KTiKY", "type": "MV"},
+                        {"title": "Cool With You", "id": "oxCHf0DWCmI", "type": "MV"},
+                        {"title": "Ditto", "id": "jUNz-uTF--E", "type": "MV"},
+                        {"title": "Super Shy", "id": "J9DlrnNlgfE", "type": "MV"},
+                        {"title": "ETA", "id": "_H1ilQy12uE", "type": "MV"},
+                        {"title": "Bubble Gum", "id": "k5jUwbAPrpo", "type": "MV"},
+                        {"title": "Supernatural", "id": "86fJXRuP6Ko", "type": "MV"},
+                        {"title": "How Sweet", "id": "m83YO2QZP-0", "type": "MV"},
+                        {"title": "Right Now", "id": "zuoPyKL2rE4", "type": "MV"}
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="ab6761610000517480668ba2b15094d083780ea9.jpg" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">NewJeans</h3>
+                            <p class="artist-genre">K-Pop Girl Group</p>
+                        </div>
+                    </div>
+                    
+                    <!-- IU -->
+                    <div class="artist-card" data-artist="iu" 
+                        data-image="allkpop_1743565610_img-0384.jpeg"
+                        data-bg-image="https://wallpapercave.com/wp/wp11752709.jpg"
+                    data-videos='[
+                    {"title": "Love wins all", "id": "JleoAppaxi0"},
+                    {"title": "Celebrity", "id": "XcoTKsNyAgU"},
+                    {"title": "LILAC", "id": "Fjf_52Lbx9o"},
+                    {"title": "Through the Night @ Concert", "id": "TgOu00Mf3kI"},
+                    {"title": "Blueming", "id": "D1PvIWdJ8xo"},
+                    {"title": "Good Day", "id": "jeqdYqsrsA0"},
+                    {"title": "Ssh..", "id": "VIDQTyNmkN4"},
+                    {"title": "Never Ending Story.", "id": "6J9ixwhDYSM"},
+                    {"title": "Palette", "id": "qZjDnn50zRo"}
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="allkpop_1743565610_img-0384.jpeg" alt="IU" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">IU</h3>
+                            <p class="artist-genre">K-Pop Soloist</p>
+                        </div>
+                    </div>
+                    
+
+                    <!-- Blackpink -->
+                    <div class="artist-card" data-artist="blackpink" 
+                        data-image="featured.jpg"
+                        data-bg-image="featured.jpg"
+                        data-videos='[
+                        {"title": "DDU-DU DDU-DU", "id": "IHNzOHi8sJs", "type": "MV"},
+                        {"title": "Kill This Love", "id": "2S24-y0Ij3Y", "type": "MV"},
+                        {"title": "How You Like That", "id": "ioNng23DkIM", "type": "MV"},
+                        {"title": "Lovesick Girls", "id": "dyRsYk0LyA8", "type": "MV"},
+                        {"title": "Pink Venom", "id": "gQlMMD8auMs", "type": "MV"},
+                        {"title": "JUMP", "id": "78iLfs2mYhY"},
+                        {"title": "DDU-DU DDU-DU @ Coachella", "id": "FzVR_fymZw4", "type": "Performance"},
+                        {"title": "Kill This Love @ Tokyo Dome", "id": "tDukIf5j6oE", "type": "Performance"}
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="featured.jpg" alt="BLACKPINK" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">BLACKPINK</h3>
+                            <p class="artist-genre">K-Pop Girl Group</p>
+                        </div>
+                    </div>
+
+
+
+                <!-- LE SSERAFIM -->
+                <div class="artist-card" data-artist="lesserafim" 
+                    data-image="LE_SSERAFIM_Different_group_concept_photo_1.webp"
+                    data-bg-image="1746302719-image (1).png"
+                    data-videos='[
+                    {"title": "FEARLESS", "id": "1zCnFsSQcYM"},
+ 	            {"title": "Blue Flame", "id": "KjFJ6c1I04E"},
+                    {"title": "ANTIFRAGILE", "id": "_TzqPoEjrmg"},
+ 	            {"title": "UNFORGIVEN", "id": "8yL7Pz8S-Qk"},
+                    {"title": "EASY", "id": "yF_rm0A8_LM"},
+                    {"title": "Smart", "id": "yF_rm0A8_LM"},
+ 	            {"title": "1-800-hot-n-fun", "id": "jF4ljzafQsY"},
+                    {"title": "Hot", "id": "Hv0TNaQN4HE"},
+                    {"title": "Different", "id": "7frlE6pMdZ0"}
+                    ]'>
+                        <div class="artist-image-container">
+                            <img src="LE_SSERAFIM_Different_group_concept_photo_1.webp" alt="LE SSERAFIM" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">LE SSERAFIM</h3>
+                            <p class="artist-genre">K-Pop Girl Group</p>
+                        </div>
+                    </div>
+
+                    <!-- aespa -->
+                    <div class="artist-card" data-artist="aespa" 
+                        data-image="unnamed-4.jpg"
+                        data-bg-image="unnamed-4.jpg"
+                        data-videos='[
+                        {"title": "Black Mamba", "id": "ZeerrnuLi5E", "type": "MV"},
+                        {"title": "Next Level", "id": "4TWR90KJl84", "type": "MV"},
+                        {"title": "Savage", "id": "WPdWvnAAurg", "type": "MV"},
+                        {"title": "Girls", "id": "dYRITmpFbJ4", "type": "MV"},
+                        {"title": "Drama", "id": "D8VEhcPeSlc", "type": "MV"},
+                        {"title": "Savage @ Knowing Bros", "id": "6kUjH3CjUqY", "type": "Performance"}
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="unnamed-4.jpg" alt="aespa" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">aespa</h3>
+                            <p class="artist-genre">K-Pop Girl Group</p>
+                        </div>
+                    </div>
+
+<!-- ive -->
+<div class="artist-card" data-artist="ive" 
+    data-image="ive-crush.jpg"
+    data-bg-image="ive-crush.jpg"
+    data-videos='[
+    {"title": "ELEVEN", "id": "Y8JFxS1HlDo", "type": "MV"},
+    {"title": "LOVE DIVE", "id": "Y8JFxS1HlDo", "type": "MV"},
+    {"title": "After LIKE", "id": "wWYtIu4YgGk", "type": "MV"},
+    {"title": "Baddie", "id": "KOMY5TTCrFM", "type": "MV"},
+    {"title": "HEYA", "id": "7QJbLeWZJfE", "type": "MV"},
+    {"title": "LOVE DIVE @ Music Bank", "id": "Hw8ZfAwgFjA", "type": "Performance"}
+    ]'>
+    <div class="artist-image-container">
+        <img src="ive-crush.jpg" alt="IVE" class="artist-image">
+    </div>
+    <div class="artist-info">
+        <h3 class="artist-name">IVE</h3>
+        <p class="artist-genre">K-Pop Girl Group</p>
+    </div>
+</div>
+
+
+
+                    <!-- Hearts2Hearts -->
+                    <div class="artist-card" data-artist="hearts2hearts" 
+                        data-image="WhatsApp-Image-2025-06-29-at-223943-662381397.webp"
+                        data-bg-image="WhatsApp-Image-2025-06-29-at-223943-662381397.webp"
+                        data-videos='[
+                            {"title": "The Chase", "id": "HqiaTnoApwk"},
+                            {"title": "STYLE", "id": "UgZ8m52rWwg"}
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="WhatsApp-Image-2025-06-29-at-223943-662381397.webp" alt="Hearts2Hearts" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">Hearts2Hearts</h3>
+                            <p class="artist-genre">K-Pop Girl Group</p>
+                        </div>
+                    </div>
+
+
+                    <!-- YOASOBI -->
+                    <div class="artist-card" data-artist="yoasobi" 
+                        data-image="cut1-1172-mini_nxzy.jpg"
+                        data-bg-image="https://wallpapercave.com/wp/wp11752709.jpg"
+                        data-videos='[
+                            {"title": "Idol", "id": "IvMFMA89Yi8"},
+                            {"title": "Yoru ni Kakeru", "id": "_ZtBv0hTm1w"},
+                            {"title": "Tabun", "id": "3PjSapc5_2o"},
+                            {"title": "Sangenshoku", "id": "mtak9YCRdRo"},
+                            {"title": "Sukida", "id": "WbQoDETayvY"},
+                            {"title": "Mō Sukoshi Dakei", "id": "cOc5njqsq-I"}
+
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="cut1-1172-mini_nxzy.jpg" alt="YOASOBI" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">YOASOBI</h3>
+                            <p class="artist-genre">J-Pop Duo</p>
+                        </div>
+                    </div>
+                    
+
+                <!-- Ed Sheeran-->
+                <div class="artist-card" data-artist="edSheeran" 
+                    data-image="Ed-Sheeran.avif"
+                    data-bg-image="Ed-Sheeran.avif"
+                    data-videos='[
+                    {"title": "Shape Of You", "id": "Svtr-p4mrQ8"},
+ 	            {"title": "Perfect", "id": "TEK0oyLOtNc"},
+                    {"title": "Photograph", "id": "SPKBtZHuzKY"},
+ 	            {"title": "Thingking Out Loud", "id": "scl0LNnoQR4"},
+                    {"title": "Castle on The Hill", "id": "P2Q5VZlVOro"}
+                    ]'>
+                        <div class="artist-image-container">
+                            <img src="Ed-Sheeran.avif" alt="Ed Sheeran" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">Ed Sheeran</h3>
+                            <p class="artist-genre">Pop</p>
+                        </div>
+                    </div>
+
+                    
+                    <!-- Billie Eilish -->
+                    <div class="artist-card" data-artist="billie" 
+                        data-image="f9dc751d511c907f02808dad68cfea1341-13-billie-eilish.rsquare.w400.webp"
+                        data-bg-image="5db7c820b61c0.jpg"
+                        data-videos='[
+                    {"title": "Lovely", "id": "OBJ8JALSEXk"},
+ 	            {"title": "Bad Guy", "id": "DyDfgMOUjCI"},
+ 	            {"title": "Ocean Eyes", "id": "XALy4dEJv-k"},
+                    {"title": "Everything I Wanted", "id": "MgdG91aCsPU"},
+                    {"title": "No Time To Die", "id": "2I1ZU5g1QNo"},
+ 	            {"title": "Happiner Than Ever", "id": "5GJWxDKyk3A"},
+                    {"title": "What Was I Made For?", "id": "cW8VLC9nnTo"}
+                        ]'>
+                        <div class="artist-image-container">
+                            <img src="f9dc751d511c907f02808dad68cfea1341-13-billie-eilish.rsquare.w400.webp" alt="Billie Eilish" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">Billie Eilish</h3>
+                            <p class="artist-genre">Pop</p>
+                        </div>
+                    </div>
+
+                <!-- Coldplay-->
+                <div class="artist-card" data-artist="coldplay" 
+                    data-image="Coldplay.jpg"
+                    data-bg-image="Coldplay.jpg"
+                    data-videos='[
+                    {"title": "Fix You", "id": "k4V3Mo61fJM"},
+ 	            {"title": "Hymn For The Weekend", "id": "nm5CiwNluKI"},
+                    {"title": "Yellow", "id": "mRP72Ib2e9I"}
+ 	          
+                    ]'>
+                        <div class="artist-image-container">
+                            <img src="Coldplay.jpg" alt="Coldplay" class="artist-image">
+                        </div>
+                        <div class="artist-info">
+                            <h3 class="artist-name">Coldplay</h3>
+                            <p class="artist-genre">Pop</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            
+            <!-- Favorites Tab -->
+            <div id="favorites" class="tab-content">
+                <div id="favorites-container" class="videos-container">
+                    <div class="empty-state">
+                        <i class="far fa-heart"></i>
+                        <h3>No Favorite Videos Yet</h3>
+                        <p>Mark videos as favorite to see them here</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <div id="history-container" class="videos-container">
+                    <div class="empty-state">
+                        <i class="far fa-clock"></i>
+                        <h3>No History Yet</h3>
+                        <p>Your watched videos will appear here</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Artist Detail Section (hidden by default) -->
+            <div id="artist-detail" class="artist-detail">
+                <!-- Content will be dynamically inserted here -->
+            </div>
+            
+            <!-- Videos Section (hidden by default) -->
+            <div id="videos-section" class="videos-section" style="display: none;">
+                <h2 class="videos-title">Music Videos & Performances</h2>
+                <div id="videos-container" class="videos-container"></div>
+            </div>
+            
+            <button id="back-button" class="back-button" style="display: none;">
+                <i class="fas fa-arrow-left"></i> Back to Artists
+            </button>
+        </div>
+    </div>
+
+    <!-- Album Photo Modal -->
+    <div class="album-modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <img class="modal-image" src="" alt="Album Photo">
+            <button class="modal-like">
+                <i class="fas fa-heart"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Artist data including members and social media
+        const artistsData = {
+            newjeans: {
+                name: "NewJeans <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "ab6761610000517480668ba2b15094d083780ea9.jpg",
+                bgImage: "https://wallpapercave.com/wp/wp11752709.jpg",
+                genre: "K-Pop Girl Group",
+                debut: "2022",
+                company: "ADOR (HYBE)",
+                description: "NewJeans is a South Korean girl group formed by ADOR, a subsidiary of HYBE Corporation. The group consists of five members: Minji, Hanni, Danielle, Haerin, and Hyein. They debuted on July 22, 2022, with the single 'Attention' and quickly rose to fame with their unique Y2K-inspired concept and fresh musical style.",
+                social: {
+                    instagram: "https://www.instagram.com/newjeans_official",
+                    twitter: "https://twitter.com/NewJeans_ADOR",
+                    youtube: "https://www.youtube.com/@NewJeans_official",
+                    tiktok: "https://www.tiktok.com/@newjeans_official"
+                },
+                members: [
+                    {
+                        name: "Minji",
+                        position: "Leader, Vocalist",
+                        image: "Minji_Olens_2024_FW_1.jpg",
+                        birth: "2004-05-07",
+                        bio: "Kim Min-ji is the leader of NewJeans. She was a trainee at Source Music before transferring to ADOR. Known for her cool and charismatic personality."
+                    },
+                    {
+                        name: "Hanni",
+                        position: "Vocalist, Dancer",
+                        image: "Hanni_OLENS_2.jpg",
+                        birth: "2004-10-06",
+                        bio: "Phạm Ngọc Hân, known as Hanni, is an Australian-Vietnamese member. She's fluent in English, Korean, and Vietnamese. Known for her bright energy and strong stage presence."
+                    },
+                    {
+                        name: "Danielle",
+                        position: "Vocalist",
+                        image: "images (1).jpg",
+                        birth: "2005-04-11",
+                        bio: "Danielle Marsh is an Australian-Korean member. She's fluent in English and Korean. Known for her sweet vocals and charming personality."
+                    },
+                    {
+                        name: "Haerin",
+                        position: "Vocalist",
+                        image: "haerin-new-jeans-20241218112303.jpg",
+                        birth: "2006-05-15",
+                        bio: "Kang Ha-rin is known for her cat-like visuals and unique tone of voice. She's the youngest Korean member of the group."
+                    },
+                    {
+                        name: "Hyein",
+                        position: "Maknae, Vocalist",
+                        image: "newjeans-official-435289965-451423220646718-4516685503722798328-n-4d5400f02ab6ba9bb69b931f4d954d9d.avif",
+                        birth: "2008-04-21",
+                        bio: "Lee Hye-in is the youngest member of NewJeans. She was previously a child model and appeared in variety shows before debut."
+                    }
+                ],
+                albums: [
+                    {
+                        name: "New Jeans",
+                        date: "2022-08-01",
+                        image: "991a594d5dd71ec284ba22ed309af63f.jpg",
+                        photos: [
+                            "991a594d5dd71ec284ba22ed309af63f.jpg",
+
+                        ]
+                    },
+
+                    {
+                        name: "Get Up",
+                        date: "2023-07-21",
+                        image: "usr_1691028337236.jpg",
+                        photos: [
+                            "usr_1691028337236.jpg",
+   
+                        ]
+                    }
+                ]
+            },
+            iu: {
+                name: "IU <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "allkpop_1743565610_img-0384.jpeg",
+                bgImage: "https://wallpapercave.com/wp/wp11752709.jpg",
+                genre: "K-Pop Soloist",
+                debut: "2008",
+                company: "EDAM Entertainment",
+                description: "IU (Lee Ji-eun) is a South Korean singer-songwriter and actress. She debuted at age 15 with the album 'Lost and Found' and has since become one of the most successful solo artists in Korea, known for her songwriting skills and versatile musical style ranging from pop to folk.",
+                social: {
+                    instagram: "https://www.instagram.com/dlwlrma",
+                    twitter: "https://twitter.com/_IUofficial",
+                    youtube: "https://www.youtube.com/@IU_Official",
+                    tiktok: "https://www.tiktok.com/@iu_leejieun"
+                },
+                members: [], // Solo artist
+                albums: [
+                    {
+                        name: "Palette",
+                        date: "2017-04-21",
+                        image: "fromandroid-726d0af4c0859987ff5b8e7aabacd2d7.avif",
+                        photos: [
+                            "fromandroid-726d0af4c0859987ff5b8e7aabacd2d7.avif",
+
+                        ]
+                    },
+                    {
+                        name: "LILAC",
+                        date: "2021-03-25",
+                        image: "fromandroid-c567bad994379cddc4a36f46cf587d78.avif",
+                        photos: [
+                            "fromandroid-c567bad994379cddc4a36f46cf587d78.avif",
+
+                        ]
+                    }
+                ]
+            },
+
+
+            blackpink: {
+                name: "BLACKPINK <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "featured.jpg",
+                bgImage: "featured.jpg",
+                genre: "K-Pop Girl Group",
+                debut: "2016",
+                company: "YG Entertainment",
+                description: "BLACKPINK is a South Korean girl group formed by YG Entertainment, consisting of members Jisoo, Jennie, Rosé, and Lisa. They are one of the most popular K-pop groups worldwide, known for their powerful performances and global hits like 'DDU-DU DDU-DU' and 'Kill This Love'.",
+                social: {
+                    instagram: "https://www.instagram.com/blackpinkofficial",
+                    twitter: "https://twitter.com/BLACKPINK",
+                    youtube: "https://www.youtube.com/@BLACKPINK",
+                    tiktok: "https://www.tiktok.com/@blackpinkofficial"
+                },
+                members: [
+                    {
+                        name: "Jisoo",
+                        position: "Lead Vocalist, Visual",
+                        image: "ab6761610000e5eb9e33dd3ae51452774a133e1f.jpg",
+                        birth: "1995-01-03",
+                        bio: "Kim Ji-soo is the oldest member and visual of BLACKPINK. Known for her stable vocals and elegant visuals."
+                    },
+                    {
+                        name: "Jennie",
+                        position: "Main Rapper, Lead Vocalist",
+                        image: "50b290ac8e262e4d6f7ee26e8cd8e678.avif",
+                        birth: "1996-01-16",
+                        bio: "Kim Jennie is the main rapper and lead vocalist. She was the first member to debut as a solo artist with 'SOLO'."
+                    },
+                    {
+                        name: "Rosé",
+                        position: "Main Vocalist, Lead Dancer",
+                        image: "Blackpink_Rosé_Rimowa_1.jpg",
+                        birth: "1997-02-11",
+                        bio: "Park Chae-young (Rosé) is the main vocalist and lead dancer. Born in New Zealand and raised in Australia, she's fluent in English and Korean."
+                    },
+                    {
+                        name: "Lisa",
+                        position: "Main Dancer, Lead Rapper, Maknae",
+                        image: "08c7864c9153043d559880f4d5bcc134.jpg",
+                        birth: "1997-03-27",
+                        bio: "Lalisa Manoban (Lisa) is the main dancer and lead rapper. She's from Thailand and is known for her powerful dance skills."
+                    }
+                ],
+                albums: [
+                    {
+                        name: "THE ALBUM",
+                        date: "2020-10-02",
+                        image: "blackpink-reunion-2025-3-1600x900.webp",
+                        photos: [
+                            "blackpink-reunion-2025-3-1600x900.webp",
+
+                        ]
+                    },
+                    {
+                        name: "BORN PINK",
+                        date: "2022-09-16",
+                        image: "blackpink-1_169.png",
+                        photos: [
+                            "blackpink-1_169.png",
+
+                        ]
+                    }
+                ]
+            },
+
+
+            yoasobi: {
+                name: "YOASOBI <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "cut1-1172-mini_nxzy.jpg",
+                bgImage: "https://wallpapercave.com/wp/wp11752709.jpg",
+                genre: "J-Pop Duo",
+                debut: "2019",
+                company: "Sony Music Japan",
+                description: "YOASOBI is a Japanese music duo consisting of Vocaloid producer Ayase and singer-songwriter Ikura. They are known for creating songs based on novels published on Monogatary.com. Their breakout hit 'Yoru ni Kakeru' became a viral sensation in 2020.",
+                social: {
+                    instagram: "https://www.instagram.com/yoasobi_staff_",
+                    twitter: "https://twitter.com/yoasobi_staff",
+                    youtube: "https://www.youtube.com/@YOASOBI_staff",
+                    tiktok: "https://www.tiktok.com/@yoasobi_staff"
+                },
+                members: [
+                    {
+                        name: "Ayase",
+                        position: "Composer, Producer",
+                        image: "Profil_Ayase_Yoasobi_06a627f1ba.jpg",
+                        birth: "1994-12-04",
+                        bio: "Ayase is the composer and producer of YOASOBI. He was previously known for his Vocaloid productions before forming the duo."
+                    },
+                    {
+                        name: "Ikura",
+                        position: "Vocalist",
+                        image: "thumb-12270-2711281-entame.jpg",
+                        birth: "2000-09-25",
+                        bio: "Ikura (Lilas Ikuta) is the vocalist of YOASOBI. She was previously active as a singer-songwriter under the name ikura before joining the duo."
+                    }
+                ],
+                albums: [
+                    {
+                        name: "The Book",
+                        date: "2021-01-06",
+                        image: "12216585.webp",
+                        photos: [
+                            "12216585.webp",
+
+                        ]
+                    },
+                    {
+                        name: "The Book 2",
+                        date: "2021-12-01",
+                        image: "Yoasobi_at_the_2024_Melon_Music_Awards_(2).png",
+                        photos: [
+                            "Yoasobi_at_the_2024_Melon_Music_Awards_(2).png",
+
+                        ]
+                    }
+                ]
+            },
+            lesserafim: {
+                name: "LE SSERAFIM <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "LE_SSERAFIM_Different_group_concept_photo_1.webp",
+                bgImage: "1746302719-image (1).png",
+                genre: "K-Pop Girl Group",
+                debut: "2022",
+                company: "Source Music (HYBE)",
+                description: "LE SSERAFIM is a South Korean girl group formed by Source Music, a subsidiary of HYBE Corporation. The group consists of five members: Sakura, Chaewon, Yunjin, Kazuha, and Eunchae. They debuted on May 2, 2022, with the EP 'FEARLESS' and are known for their strong performance skills and confident concept.",
+                social: {
+                    instagram: "https://www.instagram.com/le_sserafim",
+                    twitter: "https://twitter.com/le_sserafim",
+                    youtube: "https://www.youtube.com/@LESSERAFIM_official",
+                    tiktok: "https://www.tiktok.com/@le_sserafim"
+                },
+                members: [
+                    {
+                        name: "Sakura",
+                        position: "Vocalist, Dancer",
+                        image: "e7e2c8c41ee04a6c4c8a83b623e7d7ce.jpg",
+                        birth: "1998-03-19",
+                        bio: "Miyawaki Sakura is a Japanese member and former HKT48 and IZ*ONE member. She's the oldest member and brings experience from her previous groups."
+                    },
+                    {
+                        name: "Chaewon",
+                        position: "Leader, Vocalist",
+                        image: "artworks-GWlzzFqYfV2GqLhz-k7uyZA-t500x500.jpg",
+                        birth: "2000-08-01",
+                        bio: "Kim Chae-won is the leader of LE SSERAFIM and former IZ*ONE member. Known for her stable vocals and leadership."
+                    },
+                    {
+                        name: "Yunjin",
+                        position: "Vocalist",
+                        image: "1742267621-img-9880.jpeg",
+                        birth: "2001-10-08",
+                        bio: "Huh Yun-jin is a Korean-American member who participated in Produce 48. Known for her powerful vocals and songwriting skills."
+                    },
+                    {
+                        name: "Kazuha",
+                        position: "Dancer, Rapper",
+                        image: "kazuha-le-sserafim.jpg",
+                        birth: "2003-08-09",
+                        bio: "Nakamura Kazuha is a Japanese member and former ballet dancer. Known for her elegant dance lines and visuals."
+                    },
+                    {
+                        name: "Eunchae",
+                        position: "Maknae, Dancer, Vocalist",
+                        image: "50hong-eunchae-le-sserafim.jpg",
+                        birth: "2006-11-10",
+                        bio: "Hong Eun-chae is the youngest member. She's known for her bright energy and improving skills as the group's maknae."
+                    }
+                ],
+                albums: [
+                    {
+                        name: "FEARLESS",
+                        date: "2022-05-02",
+                        image: "Fa2rjQ_akAIy2jZ.jpg_large",
+                        photos: [
+                            "Fa2rjQ_akAIy2jZ.jpg_large",
+                        ]
+                    },
+                    {
+                        name: "ANTIFRAGILE",
+                        date: "2022-10-17",
+                        image: "Lesserafimgroupphoto.webp",
+                        photos: [
+                            "Lesserafimgroupphoto.webp",
+
+                        ]
+                    }
+                ]
+            },
+
+
+
+
+
+            aespa: {
+                name: "aespa <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "unnamed-4.jpg",
+                bgImage: "unnamed-4.jpg",
+                genre: "K-Pop Girl Group",
+                debut: "2020",
+                company: "SM Entertainment",
+                description: "aespa is a South Korean girl group formed by SM Entertainment, consisting of members Karina, Giselle, Winter, and Ningning. The group is known for their unique concept involving virtual avatars (æ) and their metaverse-based lore.",
+                social: {
+                    instagram: "https://www.instagram.com/aespa_official",
+                    twitter: "https://twitter.com/aespa_official",
+                    youtube: "https://www.youtube.com/@aespa",
+                    tiktok: "https://www.tiktok.com/@aespa_official"
+                },
+                members: [
+                    {
+                        name: "Karina",
+                        position: "Leader, Main Dancer, Lead Rapper, Vocalist",
+                        image: "7b90015ed036578bb724de0cfb5a20b1-1773960525.webp",
+                        birth: "2000-04-11",
+                        bio: "Yu Ji-min (Karina) is the leader and main dancer of aespa. Known for her charismatic stage presence and visuals."
+                    },
+                    {
+                        name: "Giselle",
+                        position: "Main Rapper, Vocalist",
+                        image: "3597995517.webp",
+                        birth: "2000-10-30",
+                        bio: "Uchinaga Aeri (Giselle) is the main rapper. She's Japanese-Korean and fluent in Korean, Japanese, and English."
+                    },
+                    {
+                        name: "Winter",
+                        position: "Lead Vocalist, Lead Dancer",
+                        image: "winter-aespa-chinaPNG-1795293173.webp",
+                        birth: "2001-01-01",
+                        bio: "Kim Min-jeong (Winter) is the lead vocalist and lead dancer. Known for her clear vocals and sharp dance moves."
+                    },
+                    {
+                        name: "Ningning",
+                        position: "Main Vocalist, Maknae",
+                        image: "304705_640W.webp",
+                        birth: "2002-10-23",
+                        bio: "Ning Yi-zhuo (Ningning) is the main vocalist and maknae. She's from China and known for her powerful vocals."
+                    }
+                ],
+                albums: [
+                    {
+                        name: "FEARLESS",
+                        date: "2022-05-02",
+                        image: "aespa-I7zm_large.jpg",
+                        photos: [
+                            "aespa-I7zm_large.jpg",
+                        ]
+                    },
+                    {
+                        name: "ANTIFRAGILE",
+                        date: "2022-10-17",
+                        image: "Snapinsai_487730512_18095791075528460_3056925407781436661_n_1080-2565162039.webp",
+                        photos: [
+                            "Snapinsai_487730512_18095791075528460_3056925407781436661_n_1080-2565162039.webp",
+
+                        ]
+                    }
+                ]
+            },
+ive: {
+    name: "IVE <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+    image: "ive-crush.jpg",
+    bgImage: "ive-crush.jpg",
+    genre: "K-Pop Girl Group",
+    debut: "2021",
+    company: "Starship Entertainment",
+    description: "IVE is a South Korean girl group formed by Starship Entertainment, consisting of members Yujin, Gaeul, Rei, Wonyoung, Liz, and Leeseo. They are known for their elegant visuals, catchy songs, and confident stage presence.",
+    social: {
+        instagram: "https://www.instagram.com/ivestarship",
+        twitter: "https://twitter.com/IVEstarship",
+        youtube: "https://www.youtube.com/@IVEstarship",
+        tiktok: "https://www.tiktok.com/@ive.official"
+    },
+    members: [
+        {
+            name: "Yujin",
+            position: "Leader, Lead Vocalist",
+            image: "XdZ1en_5c.jpg",
+            birth: "2003-09-01",
+            bio: "Ahn Yu-jin is the leader and lead vocalist of IVE. Known for her charismatic leadership and strong stage presence."
+        },
+        {
+            name: "Gaeul",
+            position: "Main Rapper, Lead Dancer",
+            image: "1eaef63032a0c720fdbaf193ca39f17d.jpg",
+            birth: "2002-09-24",
+            bio: "Kim Ga-eul is the main rapper of IVE. Recognized for her graceful dancing and charming aura."
+        },
+        {
+            name: "Rei",
+            position: "Rapper, Vocalist",
+            image: "cbb9e9a905e10f2dc9935cd4f32f1af6.jpg",
+            birth: "2004-02-03",
+            bio: "Naoi Rei is a Japanese rapper and vocalist of IVE. She is admired for her unique tone and warm personality."
+        },
+        {
+            name: "Wonyoung",
+            position: "Lead Vocalist, Center",
+            image: "067975800_1713249900-Snapinsta.app_435252840_6673908852712201_3736316865021599011_n_1080.webp",
+            birth: "2004-08-31",
+            bio: "Jang Won-young is the center and lead vocalist of IVE. Famous for her stunning visuals and model-like figure."
+        },
+        {
+            name: "Liz",
+            position: "Main Vocalist",
+            image: "https://cdn-images.dzcdn.net/images/artist/3d8e49c2266e4ff7e9fe0ce943039d7e/1900x1900-000000-80-0-0.jpg",
+            birth: "2004-11-21",
+            bio: "Kim Ji-won (Liz) is the main vocalist of IVE, known for her powerful and emotive voice."
+        },
+        {
+            name: "Leeseo",
+            position: "Vocalist, Maknae",
+            image: "153647_209667_1713877788.jpg",
+            birth: "2007-02-21",
+            bio: "Lee Hyun-seo (Leeseo) is the youngest member of IVE. She captivates fans with her bright energy and talent."
+        }
+    ],
+    albums: [
+        {
+            name: "IVE THE 1ST ALBUM <I’VE MINE>",
+            date: "2023-10-13",
+            image: "ive-crush (1).jpg",
+            photos: [
+                "ive-crush (1).jpg"
+            ]
+        },
+        {
+            name: "LOVE DIVE",
+            date: "2022-04-05",
+            image: "lakalksksks-3585989556.webp",
+            photos: [
+                "lakalksksks-3585989556.webp"
+                        ]
+                    }
+                ]
+            },
+
+
+
+            coldplay: {
+                name: "Coldplay <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "Coldplay.jpg", 
+                bgImage: "Coldplay.jpg", 
+                genre: "Alternative Rock / Pop Rock",
+                debut: "1996",
+                company: "Parlophone / Atlantic Records",
+                description: "Coldplay is a British rock band formed in London in 1996, consisting of Chris Martin, Jonny Buckland, Guy Berryman, and Will Champion. Known for their melodic sound, uplifting lyrics, and grand live performances, they have become one of the world's best-selling music acts.",
+                social: {
+                    instagram: "https://www.instagram.com/coldplay",
+                    twitter: "https://twitter.com/coldplay",
+                    youtube: "https://www.youtube.com/@coldplay",
+                    tiktok: "https://www.tiktok.com/@coldplay"
+                },
+                members: [
+                    {
+                        name: "Chris Martin",
+                        position: "Lead Vocals, Piano, Guitar",
+                        image: "ChrisMartinManch030623_(cropped).jpg",
+                        birth: "1977-03-02",
+                        bio: "Chris Martin is the lead vocalist, pianist, and co-founder of Coldplay. Known for his distinctive voice, charismatic stage presence, and songwriting."
+                    },
+                    {
+                        name: "Jonny Buckland",
+                        position: "Lead Guitar, Backing Vocals",
+                        image: "Jonny-Buckland-QA.webp",
+                        birth: "1977-09-11",
+                        bio: "Jonny Buckland is the lead guitarist of Coldplay, known for his melodic guitar riffs and atmospheric sounds."
+                    },
+                    {
+                        name: "Guy Berryman",
+                        position: "Bass Guitar",
+                        image: "GuyBerrymanManch030623_(cropped).jpg",
+                        birth: "1978-04-12",
+                        bio: "Guy Berryman is the bassist of Coldplay, providing the rhythmic foundation of the band's sound."
+                    },
+                    {
+                        name: "Will Champion",
+                        position: "Drums, Backing Vocals",
+                        image: "Guy-Berryman-QA.webp",
+                        birth: "1978-07-31",
+                        bio: "Will Champion is the drummer and multi-instrumentalist of Coldplay, also contributing backing vocals and arrangements."
+                    }
+                ],
+                albums: [
+                    {
+                        name: "Parachutes",
+                        date: "2000-07-10",
+                        image: "coldplay-album1.jpg",
+                        photos: [
+                            "coldplay-photo1.jpg",
+                            "coldplay-photo2.jpg",
+                            "coldplay-photo3.jpg"
+                        ]
+                    },
+                    {
+                        name: "A Rush of Blood to the Head",
+                        date: "2002-08-26",
+                        image: "coldplay-album2.jpg",
+                        photos: [
+                            "coldplay-photo4.jpg",
+                            "coldplay-photo5.jpg",
+                            "coldplay-photo6.jpg"
+                        ]
+                    }
+                ]
+            },
+            edSheeran: {
+                name: "Ed Sheeran <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "ed-sheeran-goes-countryjpg-20240308022924.webp",
+                bgImage: "ed-sheeran-goes-countryjpg-20240308022924.webp",
+                genre: "Pop / Folk Pop",
+                debut: "2011",
+                company: "Asylum Records / Atlantic Records",
+                description: "Ed Sheeran is an English singer-songwriter and musician known for his heartfelt lyrics, melodic guitar playing, and versatile style blending pop, folk, and R&B. He rose to fame with his debut album '+' in 2011 and has since become one of the world's best-selling music artists.",
+                social: {
+                    instagram: "https://www.instagram.com/teddysphotos",
+                    twitter: "https://twitter.com/edsheeran",
+                    youtube: "https://www.youtube.com/@EdSheeran",
+                    tiktok: "https://www.tiktok.com/@edsheeran"
+                },
+                members: [], // Solo artist
+                albums: [
+                    {
+                        name: "+ (Plus)",
+                        date: "2011-09-09",
+                        image: "edsheeran-album1.jpg",
+                        photos: [
+                            "edsheeran-photo1.jpg",
+                            "edsheeran-photo2.jpg",
+                            "edsheeran-photo3.jpg"
+                        ]
+                    },
+                    {
+                        name: "÷ (Divide)",
+                        date: "2017-03-03",
+                        image: "edsheeran-album2.jpg",
+                        photos: [
+                            "edsheeran-photo4.jpg",
+                            "edsheeran-photo5.jpg",
+                            "edsheeran-photo6.jpg"
+                        ]
+                    }
+                ]
+            },
+            billie: {
+                name: "Billie Eilish <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+                image: "f9dc751d511c907f02808dad68cfea1341-13-billie-eilish.rsquare.w400.webp",
+                bgImage: "5db7c820b61c0.jpg",
+                genre: "Pop",
+                debut: "2015",
+                company: "Darkroom/Interscope",
+                description: "Billie Eilish Pirate Baird O'Connell is an American singer-songwriter. She first gained attention in 2015 with her debut single 'Ocean Eyes' and has since become one of the biggest pop stars in the world, known for her distinctive vocal style and genre-blending music.",
+                social: {
+                    instagram: "https://www.instagram.com/billieeilish",
+                    twitter: "https://twitter.com/billieeilish",
+                    youtube: "https://www.youtube.com/@BillieEilish",
+                    tiktok: "https://www.tiktok.com/@billieeilish"
+                },
+                members: [], // Solo artist
+                albums: [
+                    {
+                        name: "When We All Fall Asleep, Where Do We Go?",
+                        date: "2019-03-29",
+                        image: "billie-album1.jpg",
+                        photos: [
+                            "billie-photo1.jpg",
+                        ]
+                    },
+                    {
+                        name: "Happier Than Ever",
+                        date: "2021-07-30",
+                        image: "billie-album2.jpg",
+                        photos: [
+                            "billie-photo4.jpg",
+
+                        ]
+                    }
+                ]
+            },
+
+
+
+
+hearts2hearts: {
+    name: "Hearts2Hearts <i class='fa-solid fa-circle-check' style='color:#1DA1F2;'></i>",
+    image: "WhatsApp-Image-2025-06-29-at-223943-662381397.webp",
+    bgImage: "WhatsApp-Image-2025-06-29-at-223943-662381397.webp",
+    genre: "K-Pop Girl Group",
+    debut: "2025",
+    company: "SM Entertainment",
+    description: "Hearts2Hearts is a newly debuted 8-member K-Pop girl group under SM Entertainment, known for their diverse talents and international lineup. The group includes Carmen, the first Indonesian idol to debut under SM Entertainment.",
+    social: {
+        instagram: "https://www.instagram.com/hearts2hearts_official",
+        twitter: "https://twitter.com/hearts2hearts",
+        youtube: "https://www.youtube.com/@hearts2hearts",
+        tiktok: "https://www.tiktok.com/@hearts2hearts"
+    },
+    members: [
+        {
+            name: "Jiwoo",
+            position: "Leader, Dancer, Visual",
+            image: "df3cedd07ed94cc09c4647a6212d370a.jpg",
+            birth: "",
+            bio: "Leader of Hearts2Hearts, known for her charisma, dance skills, and leadership."
+        },
+        {
+            name: "Yuha",
+            position: "Vocalist, Dancer",
+            image: "78ae3a08b4c10071385306d4c0e308b8.jpg",
+            birth: "",
+            bio: "A talented vocalist and dancer, bringing energy and versatility to the group."
+        },
+        {
+            name: "Stella",
+            position: "Vocalist",
+            image: "Stella-H2H-Biodata-Kim-Da-hyun-Umur-dan-Profil-Lengkap.webp",
+            birth: "",
+            bio: "Bilingual Korean-Canadian member, also skilled in playing musical instruments."
+        },
+        {
+            name: "Juun",
+            position: "Main Dancer, Rapper",
+            image: "images (junn).jpg",
+            birth: "",
+            bio: "The main dancer and rapper, known for her powerful stage presence."
+        },
+        {
+            name: "A-na",
+            position: "Lead Vocalist, Visual",
+            image: "images (anna).jpg",
+            birth: "",
+            bio: "Lead vocalist with a stunning visual and emotional singing style."
+        },
+        {
+            name: "Ian",
+            position: "Visual, Center",
+            image: "images (ian).jpg",
+            birth: "",
+            bio: "Center of the group, known for her charm and bright personality."
+        },
+        {
+            name: "Carmen",
+            position: "Vocalist",
+            image: "IMG_3758-101593084.webp",
+            birth: "",
+            bio: "First Indonesian idol under SM Entertainment, admired for her vocal tone and international appeal."
+        },
+        {
+            name: "Ye-on",
+            position: "Vocalist, Maknae",
+            image: "images (yeon).jpg",
+            birth: "",
+            bio: "The youngest member, known for her youthful energy and fresh vocals."
+        }
+    ],
+    albums: [
+        {
+            name: "The Chase",
+            date: "2025-01-22",
+            image: "glagpxgxcaiys5i-58fd3fc1caeb4ff5858999711a98d12d-3be0efefd4bdac62f53cd9d0d6eb785d.avif",
+            photos: [
+                "glagpxgxcaiys5i-58fd3fc1caeb4ff5858999711a98d12d-3be0efefd4bdac62f53cd9d0d6eb785d.avif",
+
+
+
+                        ]
+                    }
+                ]
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize favorites and history from localStorage
+            let favorites = JSON.parse(localStorage.getItem('videoFavorites')) || [];
+            let history = JSON.parse(localStorage.getItem('videoHistory')) || [];
+            let videoStats = JSON.parse(localStorage.getItem('videoStats')) || {};
+            let likedAlbums = JSON.parse(localStorage.getItem('likedAlbums')) || [];
+            let likedPhotos = JSON.parse(localStorage.getItem('likedPhotos')) || [];
+            
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Remove active class from all buttons and contents
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding content
+                    button.classList.add('active');
+                    const tabId = button.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                    
+                    // Hide artist detail and videos section if switching tabs
+                    if (tabId !== 'main') {
+                        document.getElementById('artist-detail').classList.remove('active');
+                        document.getElementById('videos-section').style.display = 'none';
+                        document.getElementById('back-button').style.display = 'none';
+                        document.body.classList.remove('artist-bg');
+                    }
+                    
+                    // Update favorites and history displays when their tabs are clicked
+                    if (tabId === 'favorites') {
+                        updateFavoritesDisplay();
+                    } else if (tabId === 'history') {
+                        updateHistoryDisplay();
+                    } else if (tabId === 'main') {
+                        updateTrendingDisplay();
+                    }
+                });
+            });
+            
+            // Search functionality
+            const searchBar = document.querySelector('.search-bar');
+            const searchResults = document.querySelector('.search-results');
+            
+            searchBar.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                if (searchTerm.length < 2) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+                
+                // Search artists and videos
+                let results = [];
+                
+                // Search artists
+                for (const artistId in artistsData) {
+                    const artist = artistsData[artistId];
+                    if (artist.name.toLowerCase().includes(searchTerm)) {
+                        results.push({
+                            type: 'artist',
+                            id: artistId,
+                            name: artist.name,
+                            image: artist.image,
+                            genre: artist.genre
+                        });
+                    }
+                    
+                    // Search members
+                    if (artist.members) {
+                        artist.members.forEach(member => {
+                            if (member.name.toLowerCase().includes(searchTerm)) {
+                                results.push({
+                                    type: 'member',
+                                    id: artistId,
+                                    name: member.name,
+                                    image: member.image,
+                                    artist: artist.name,
+                                    position: member.position
+                                });
+                            }
+                        });
+                    }
+                }
+                
+                // Display results
+                if (results.length > 0) {
+                    searchResults.innerHTML = '';
+                    results.forEach(result => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'search-result-item';
+                        
+                        if (result.type === 'artist') {
+                            resultItem.innerHTML = `
+                                <img src="${result.image}" alt="${result.name}">
+                                <div class="search-result-info">
+                                    <h4>${result.name}</h4>
+                                    <p>${result.genre}</p>
+                                </div>
+                                <span class="search-result-type">Artist</span>
+                            `;
+                        } else if (result.type === 'member') {
+                            resultItem.innerHTML = `
+                                <img src="${result.image}" alt="${result.name}">
+                                <div class="search-result-info">
+                                    <h4>${result.name}</h4>
+                                    <p>${result.position} of ${result.artist}</p>
+                                </div>
+                                <span class="search-result-type">Member</span>
+                            `;
+                        }
+                        
+                        resultItem.addEventListener('click', function() {
+                            if (result.type === 'artist') {
+                                const artistCard = document.querySelector(`.artist-card[data-artist="${result.id}"]`);
+                                if (artistCard) {
+                                    artistCard.click();
+                                }
+                            } else if (result.type === 'member') {
+                                const artistCard = document.querySelector(`.artist-card[data-artist="${result.id}"]`);
+                                if (artistCard) {
+                                    artistCard.click();
+                                    setTimeout(() => {
+                                        const memberCard = document.querySelector(`.member-card[data-member="${result.name.toLowerCase()}"]`);
+                                        if (memberCard) {
+                                            memberCard.click();
+                                        }
+                                    }, 500);
+                                }
+                            }
+                            
+                            searchResults.style.display = 'none';
+                            searchBar.value = '';
+                        });
+                        
+                        searchResults.appendChild(resultItem);
+                    });
+                    
+                    searchResults.style.display = 'block';
+                } else {
+                    searchResults.style.display = 'none';
+                }
+            });
+            
+            // Close search results when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchBar.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+            
+            // Artist card click functionality
+            const artistCards = document.querySelectorAll('.artist-card');
+            const artistDetailSection = document.getElementById('artist-detail');
+            const videosSection = document.getElementById('videos-section');
+            const videosContainer = document.getElementById('videos-container');
+            const backButton = document.getElementById('back-button');
+            const favoritesContainer = document.getElementById('favorites-container');
+            const historyContainer = document.getElementById('history-container');
+            const trendingContainer = document.getElementById('trending-container');
+            
+            // Album modal elements
+            const albumModal = document.querySelector('.album-modal');
+            const modalImage = document.querySelector('.modal-image');
+            const modalClose = document.querySelector('.modal-close');
+            const modalLike = document.querySelector('.modal-like');
+            
+            // Initialize trending videos
+            updateTrendingDisplay();
+            
+            artistCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const artistId = card.getAttribute('data-artist');
+                    const artistData = artistsData[artistId];
+                    const videos = JSON.parse(card.getAttribute('data-videos'));
+                    const bgImage = card.getAttribute('data-bg-image');
+                    
+                    // Set background image
+                    document.body.style.setProperty('--artist-bg-image', `url(${bgImage})`);
+                    document.body.classList.add('artist-bg');
+                    
+                    // Show artist detail section
+                    showArtistDetail(artistData);
+                    
+                    // Populate videos container
+                    videosContainer.innerHTML = '';
+                    videos.forEach((video, index) => {
+                        const isFavorited = favorites.some(fav => 
+                            fav.id === video.id && fav.artistId === artistId
+                        );
+                        
+                        const videoCard = document.createElement('div');
+                        videoCard.className = 'video-card';
+                        videoCard.setAttribute('data-artist-id', artistId);
+                        videoCard.setAttribute('data-video-id', video.id);
+                        videoCard.innerHTML = `
+                            <div class="video-thumbnail">
+                                <img src="https://img.youtube.com/vi/${video.id}/maxresdefault.jpg" class="thumbnail-image" alt="${video.title}">
+                                <div class="play-button">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                                <iframe class="video-iframe" src="https://www.youtube.com/embed/${video.id}?enablejsapi=1" 
+                                    frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                            </div>
+                            <div class="video-info">
+                                <div class="video-text">
+                                    <h4 class="video-title">${video.title}</h4>
+                                    <p class="video-artist">${artistData.name} • ${video.type || 'Video'}</p>
+                                </div>
+                                <div class="video-actions">
+                                    <button class="action-btn favorite-btn ${isFavorited ? 'favorited' : ''}" 
+                                        title="${isFavorited ? 'Remove from favorites' : 'Add to favorites'}">
+                                        <i class="fas fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        videosContainer.appendChild(videoCard);
+                    });
+                    
+                    // Show videos section and hide main grid
+                    document.getElementById('main').style.display = 'none';
+                    artistDetailSection.classList.add('active');
+                    videosSection.style.display = 'block';
+                    backButton.style.display = 'block';
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Set up event listeners for the new video cards
+                    setupVideoCardListeners();
+                });
+            });
+            
+            // Back button functionality
+            backButton.addEventListener('click', () => {
+                document.getElementById('main').style.display = 'block';
+                artistDetailSection.classList.remove('active');
+                videosSection.style.display = 'none';
+                backButton.style.display = 'none';
+                document.body.classList.remove('artist-bg');
+                
+                // Scroll back to the top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Function to show artist detail
+            function showArtistDetail(artist) {
+                const artistDetailSection = document.getElementById('artist-detail');
+                
+                let membersHTML = '';
+                if (artist.members && artist.members.length > 0) {
+                    membersHTML = `
+                        <div class="members-section">
+                            <h3 class="members-title">Members</h3>
+                            <div class="members-grid">
+                                ${artist.members.map(member => `
+                                    <div class="member-card" data-member="${member.name.toLowerCase()}">
+                                        <img src="${member.image}" class="member-image" alt="${member.name}">
+                                        <h4 class="member-name">${member.name}</h4>
+                                        <p class="member-position">${member.position}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Album gallery HTML
+                let albumHTML = '';
+                if (artist.albums && artist.albums.length > 0) {
+                    albumHTML = `
+                        <div class="album-section">
+                            <h3 class="album-title">Albums & Photos</h3>
+                            <div class="album-grid">
+                                ${artist.albums.map(album => {
+                                    const isLiked = likedAlbums.includes(`${artist.name.toLowerCase()}_${album.name.toLowerCase()}`);
+                                    return `
+                                        <div class="album-card">
+                                            <div class="album-image-container">
+                                                <img src="${album.image}" class="album-image" alt="${album.name}" data-album="${album.name.toLowerCase()}" data-artist="${artist.name.toLowerCase()}">
+                                            </div>
+                                            <div class="album-info">
+                                                <h4 class="album-name">${album.name}</h4>
+                                                <p class="album-date">${new Date(album.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                                            </div>
+                                            <button class="album-like-btn ${isLiked ? 'liked' : ''}" 
+                                                data-artist="${artist.name.toLowerCase()}" 
+                                                data-album="${album.name.toLowerCase()}">
+                                                <i class="fas fa-heart"></i>
+                                            </button>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                artistDetailSection.innerHTML = `
+                    <button class="back-button top back-to-main">
+                        <i class="fas fa-arrow-left"></i> Back to Artists
+                    </button>
+                    
+                    <div class="artist-header">
+                        <img src="${artist.image}" class="artist-detail-image" alt="${artist.name}">
+                        <div class="artist-detail-info">
+                            <h2 class="artist-detail-name">${artist.name}</h2>
+                            <p class="artist-detail-description">
+                                <strong>Genre:</strong> ${artist.genre} • 
+                                <strong>Debut:</strong> ${artist.debut} • 
+                                <strong>Company:</strong> ${artist.company}
+                            </p>
+                            <p class="artist-detail-description">${artist.description}</p>
+                            <div class="social-links">
+                                ${artist.social.instagram ? `<a href="${artist.social.instagram}" class="social-link instagram" target="_blank"><i class="fab fa-instagram"></i></a>` : ''}
+                                ${artist.social.twitter ? `<a href="${artist.social.twitter}" class="social-link twitter" target="_blank"><i class="fab fa-twitter"></i></a>` : ''}
+                                ${artist.social.tiktok ? `<a href="${artist.social.tiktok}" class="social-link tiktok" target="_blank"><i class="fab fa-tiktok"></i></a>` : ''}
+                                ${artist.social.youtube ? `<a href="${artist.social.youtube}" class="social-link youtube" target="_blank"><i class="fab fa-youtube"></i></a>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="artist-nav-tabs">
+                        <div class="artist-nav-tab active" data-tab="videos">
+                            <i class="fas fa-music"></i> Videos
+                        </div>
+                        ${artist.members && artist.members.length > 0 ? `
+                        <div class="artist-nav-tab" data-tab="members">
+                            <i class="fas fa-users"></i> Members
+                        </div>
+                        ` : ''}
+                        ${artist.albums && artist.albums.length > 0 ? `
+                        <div class="artist-nav-tab" data-tab="albums">
+                            <i class="fas fa-images"></i> Gallery
+                        </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div id="artist-videos-tab" class="artist-tab-content active">
+                        <!-- Videos will be shown here -->
+                    </div>
+                    
+                    ${membersHTML}
+                    
+                    ${albumHTML}
+                `;
+                
+                // Set artist ID for member reference
+                artistDetailSection.setAttribute('data-artist-id', artist.name.toLowerCase().replace(/\s/g, ''));
+                
+                // Set up back button
+                document.querySelector('.back-to-main').addEventListener('click', function() {
+                    document.getElementById('main').style.display = 'block';
+                    artistDetailSection.classList.remove('active');
+                    videosSection.style.display = 'none';
+                    backButton.style.display = 'none';
+                    document.body.classList.remove('artist-bg');
+                });
+                
+                // Set up member card click listeners
+                document.querySelectorAll('.member-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const memberName = this.getAttribute('data-member');
+                        const artist = artistsData[this.closest('.artist-detail').getAttribute('data-artist-id')];
+                        const member = artist.members.find(m => m.name.toLowerCase() === memberName);
+                        
+                        showMemberDetail(member, artist.name);
+                    });
+                });
+                
+                // Set up album like buttons
+                document.querySelectorAll('.album-like-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const artistName = this.getAttribute('data-artist');
+                        const albumName = this.getAttribute('data-album');
+                        const albumKey = `${artistName}_${albumName}`;
+                        
+                        if (likedAlbums.includes(albumKey)) {
+                            // Unlike
+                            likedAlbums = likedAlbums.filter(item => item !== albumKey);
+                            this.classList.remove('liked');
+                        } else {
+                            // Like
+                            likedAlbums.push(albumKey);
+                            this.classList.add('liked');
+                        }
+                        
+                        localStorage.setItem('likedAlbums', JSON.stringify(likedAlbums));
+                    });
+                });
+                
+                // Set up album image click listeners
+                document.querySelectorAll('.album-image').forEach(img => {
+                    img.addEventListener('click', function() {
+                        const artistName = this.getAttribute('data-artist');
+                        const albumName = this.getAttribute('data-album');
+                        const artist = Object.values(artistsData).find(a => a.name.toLowerCase().includes(artistName));
+                        const album = artist.albums.find(a => a.name.toLowerCase() === albumName);
+                        
+                        // Show first photo in modal
+                        showPhotoModal(album.photos[0], artistName, albumName, 0);
+                    });
+                });
+                
+                // Set up artist tab navigation
+                const artistNavTabs = document.querySelectorAll('.artist-nav-tab');
+                artistNavTabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        const tabId = this.getAttribute('data-tab');
+                        
+                        // Hide all tab contents
+                        document.querySelectorAll('.artist-tab-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
+                        document.querySelectorAll('.members-section').forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        document.querySelectorAll('.album-section').forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        
+                        // Show selected tab content
+                        artistNavTabs.forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        if (tabId === 'videos') {
+                            document.getElementById('artist-videos-tab').classList.add('active');
+                        } else if (tabId === 'members') {
+                            document.querySelector('.members-section').style.display = 'block';
+                        } else if (tabId === 'albums') {
+                            document.querySelector('.album-section').style.display = 'block';
+                        }
+                    });
+                });
+            }
+            
+            // Function to show member detail
+            function showMemberDetail(member, artistName) {
+                const artistDetailSection = document.getElementById('artist-detail');
+                artistDetailSection.innerHTML = `
+                    <div class="member-detail active">
+                        <button class="back-button top back-to-members">
+                            <i class="fas fa-arrow-left"></i> Back to Members
+                        </button>
+                        
+                        <div class="member-header">
+                            <img src="${member.image}" class="member-detail-image" alt="${member.name}">
+                            <div class="member-detail-info">
+                                <h2 class="member-detail-name">${member.name}</h2>
+                                <p class="member-detail-position">${member.position} of ${artistName}</p>
+                                <p class="member-detail-bio">
+                                    <strong>Birth:</strong> ${new Date(member.birth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}<br><br>
+                                    ${member.bio}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Back to members button
+                document.querySelector('.back-to-members').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const artistId = artistDetailSection.getAttribute('data-artist-id');
+                    showArtistDetail(artistsData[artistId]);
+                    
+                    // Activate members tab
+                    setTimeout(() => {
+                        const membersTab = document.querySelector('.artist-nav-tab[data-tab="members"]');
+                        if (membersTab) {
+                            membersTab.click();
+                        }
+                    }, 100);
+                });
+            }
+            
+            // Function to show photo modal
+            function showPhotoModal(photoSrc, artistName, albumName, photoIndex) {
+                const photoKey = `${artistName}_${albumName}_${photoSrc}`;
+                const isLiked = likedPhotos.includes(photoKey);
+                
+                modalImage.src = photoSrc;
+                modalLike.className = isLiked ? 'modal-like liked' : 'modal-like';
+                albumModal.classList.add('active');
+                
+                // Set up like button
+                modalLike.onclick = function() {
+                    if (likedPhotos.includes(photoKey)) {
+                        likedPhotos = likedPhotos.filter(item => item !== photoKey);
+                        this.classList.remove('liked');
+                    } else {
+                        likedPhotos.push(photoKey);
+                        this.classList.add('liked');
+                    }
+                    localStorage.setItem('likedPhotos', JSON.stringify(likedPhotos));
+                };
+            }
+            
+            // Close modal
+            modalClose.addEventListener('click', function() {
+                albumModal.classList.remove('active');
+            });
+            
+            // Close modal when clicking outside
+            albumModal.addEventListener('click', function(e) {
+                if (e.target === albumModal) {
+                    albumModal.classList.remove('active');
+                }
+            });
+            
+            // Function to set up event listeners for video cards
+            function setupVideoCardListeners() {
+                // Thumbnail click to play video
+                document.querySelectorAll('.video-thumbnail').forEach(thumbnail => {
+                    thumbnail.addEventListener('click', function() {
+                        const iframe = this.querySelector('.video-iframe');
+                        const thumbnailImg = this.querySelector('.thumbnail-image');
+                        const playButton = this.querySelector('.play-button');
+                        
+                        // Show iframe and hide thumbnail
+                        iframe.style.display = 'block';
+                        thumbnailImg.style.display = 'none';
+                        playButton.style.display = 'none';
+                        
+                        // Force play the video
+                        iframe.src += "&autoplay=1";
+                        
+                        // Record in history and stats
+                        const videoCard = this.closest('.video-card');
+                        const artistId = videoCard.getAttribute('data-artist-id');
+                        const videoId = videoCard.getAttribute('data-video-id');
+                        const videoTitle = videoCard.querySelector('.video-title').textContent;
+                        const artistName = videoCard.querySelector('.video-artist').textContent.split(' • ')[0];
+                        const videoType = videoCard.querySelector('.video-artist').textContent.split(' • ')[1] || 'Video';
+                        
+                        addToHistory(artistId, videoId, videoTitle, artistName);
+                        recordVideoView(artistId, videoId, videoTitle, artistName, videoType);
+                    });
+                });
+                
+                // Favorite button functionality
+                document.querySelectorAll('.favorite-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const videoCard = this.closest('.video-card');
+                        const artistId = videoCard.getAttribute('data-artist-id');
+                        const videoId = videoCard.getAttribute('data-video-id');
+                        const videoTitle = videoCard.querySelector('.video-title').textContent;
+                        const artistName = videoCard.querySelector('.video-artist').textContent.split(' • ')[0];
+                        const videoType = videoCard.querySelector('.video-artist').textContent.split(' • ')[1] || 'Video';
+                        
+                        const videoInfo = {
+                            id: videoId,
+                            artistId: artistId,
+                            title: videoTitle,
+                            artist: artistName,
+                            type: videoType,
+                            thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                        };
+                        
+                        // Check if already favorited
+                        const existingIndex = favorites.findIndex(fav => 
+                            fav.id === videoId && fav.artistId === artistId
+                        );
+                        
+                        if (existingIndex >= 0) {
+                            // Remove from favorites
+                            favorites.splice(existingIndex, 1);
+                            this.classList.remove('favorited');
+                            this.setAttribute('title', 'Add to favorites');
+                        } else {
+                            // Add to favorites
+                            favorites.push(videoInfo);
+                            this.classList.add('favorited');
+                            this.setAttribute('title', 'Remove from favorites');
+                        }
+                        
+                        // Save to localStorage
+                        localStorage.setItem('videoFavorites', JSON.stringify(favorites));
+                        
+                        // Update favorites display if on favorites tab
+                        if (document.querySelector('.tab-button[data-tab="favorites"]').classList.contains('active')) {
+                            updateFavoritesDisplay();
+                        }
+                        
+                        // Update trending display if on main tab
+                        if (document.querySelector('.tab-button[data-tab="main"]').classList.contains('active')) {
+                            updateTrendingDisplay();
+                        }
+                    });
+                });
+            }
+            
+            // Function to record video view for stats
+            function recordVideoView(artistId, videoId, videoTitle, artistName, videoType) {
+                const key = `${artistId}_${videoId}`;
+                
+                if (!videoStats[key]) {
+                    videoStats[key] = {
+                        id: videoId,
+                        artistId: artistId,
+                        title: videoTitle,
+                        artist: artistName,
+                        type: videoType,
+                        views: 0,
+                        lastViewed: new Date().toISOString(),
+                        thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`
+                    };
+                }
+                
+                videoStats[key].views++;
+                videoStats[key].lastViewed = new Date().toISOString();
+                localStorage.setItem('videoStats', JSON.stringify(videoStats));
+                
+                // Update trending display if on main tab
+                if (document.querySelector('.tab-button[data-tab="main"]').classList.contains('active')) {
+                    updateTrendingDisplay();
+                }
+            }
+            
+            // Function to update trending display
+            function updateTrendingDisplay() {
+                // Convert videoStats object to array and sort by views
+                const trendingVideos = Object.values(videoStats)
+                    .sort((a, b) => b.views - a.views)
+                    .slice(0, 4); // Show only top 4 trending videos
+                
+                if (trendingVideos.length === 0) {
+                    trendingContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-music"></i>
+                            <h3>No Trending Videos Yet</h3>
+                            <p>Watch videos to see them appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                trendingContainer.innerHTML = '';
+                trendingVideos.forEach((video, index) => {
+                    const rankClass = index < 3 ? `rank-${index + 1}` : '';
+                    const trendingCard = document.createElement('div');
+                    trendingCard.className = 'trending-card';
+                    trendingCard.setAttribute('data-artist-id', video.artistId);
+                    trendingCard.setAttribute('data-video-id', video.id);
+                    trendingCard.innerHTML = `
+                        <div class="trending-rank ${rankClass}">${index + 1}</div>
+                        <div class="trending-thumbnail">
+                            <img src="${video.thumbnail}" alt="${video.title}">
+                        </div>
+                        <div class="trending-info">
+                            <h4 class="trending-title">${video.title}</h4>
+                            <p class="trending-artist">${video.artist}</p>
+                            <div class="trending-stats">
+                                <i class="fas fa-eye"></i> ${video.views} views
+                            </div>
+                        </div>
+                    `;
+                    trendingContainer.appendChild(trendingCard);
+                });
+                
+                // Set up click listeners for trending cards
+                document.querySelectorAll('.trending-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const artistId = this.getAttribute('data-artist-id');
+                        const videoId = this.getAttribute('data-video-id');
+                        
+                        // Find the artist card and simulate click
+                        const artistCard = document.querySelector(`.artist-card[data-artist="${artistId}"]`);
+                        if (artistCard) {
+                            artistCard.click();
+                            
+                            // After a delay, scroll to and play the video
+                            setTimeout(() => {
+                                const videoCard = document.querySelector(`.video-card[data-video-id="${videoId}"]`);
+                                if (videoCard) {
+                                    videoCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    
+                                    // Simulate click on the video thumbnail
+                                    const thumbnail = videoCard.querySelector('.video-thumbnail');
+                                    if (thumbnail) {
+                                        thumbnail.click();
+                                    }
+                                }
+                            }, 500);
+                        }
+                    });
+                });
+            }
+            
+            // Function to update favorites display
+            function updateFavoritesDisplay() {
+                if (favorites.length === 0) {
+                    favoritesContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="far fa-heart"></i>
+                            <h3>No Favorite Videos Yet</h3>
+                            <p>Mark videos as favorite to see them here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                favoritesContainer.innerHTML = '';
+                favorites.forEach(video => {
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    videoCard.setAttribute('data-artist-id', video.artistId);
+                    videoCard.setAttribute('data-video-id', video.id);
+                    videoCard.innerHTML = `
+                        <div class="video-thumbnail">
+                            <img src="${video.thumbnail}" class="thumbnail-image" alt="${video.title}">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <iframe class="video-iframe" src="https://www.youtube.com/embed/${video.id}?enablejsapi=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-text">
+                                <h4 class="video-title">${video.title}</h4>
+                                <p class="video-artist">${video.artist} • ${video.type}</p>
+                            </div>
+                            <div class="video-actions">
+                                <button class="action-btn favorite-btn favorited" title="Remove from favorites">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    favoritesContainer.appendChild(videoCard);
+                });
+                
+                // Set up event listeners for favorite cards
+                document.querySelectorAll('#favorites-container .video-thumbnail').forEach(thumbnail => {
+                    thumbnail.addEventListener('click', function() {
+                        const iframe = this.querySelector('.video-iframe');
+                        const thumbnailImg = this.querySelector('.thumbnail-image');
+                        
+                        // Show iframe and hide thumbnail
+                        iframe.style.display = 'block';
+                        thumbnailImg.style.display = 'none';
+                        this.querySelector('.play-button').style.display = 'none';
+                        
+                        // Force play the video
+                        iframe.src += "&autoplay=1";
+                        
+                        // Record in history
+                        const videoCard = this.closest('.video-card');
+                        const artistId = videoCard.getAttribute('data-artist-id');
+                        const videoId = videoCard.getAttribute('data-video-id');
+                        const videoTitle = videoCard.querySelector('.video-title').textContent;
+                        const artistName = videoCard.querySelector('.video-artist').textContent.split(' • ')[0];
+                        const videoType = videoCard.querySelector('.video-artist').textContent.split(' • ')[1] || 'Video';
+                        
+                        addToHistory(artistId, videoId, videoTitle, artistName);
+                        recordVideoView(artistId, videoId, videoTitle, artistName, videoType);
+                    });
+                });
+                
+                // Favorite button functionality in favorites tab
+                document.querySelectorAll('#favorites-container .favorite-btn').forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const videoCard = this.closest('.video-card');
+                        const artistId = videoCard.getAttribute('data-artist-id');
+                        const videoId = videoCard.getAttribute('data-video-id');
+                        
+                        // Remove from favorites
+                        favorites = favorites.filter(fav => 
+                            !(fav.id === videoId && fav.artistId === artistId)
+                        );
+                        
+                        // Save to localStorage
+                        localStorage.setItem('videoFavorites', JSON.stringify(favorites));
+                        
+                        // Update display
+                        updateFavoritesDisplay();
+                    });
+                });
+            }
+            
+            // Function to add video to history
+            function addToHistory(artistId, videoId, videoTitle, artistName) {
+                const videoInfo = {
+                    id: videoId,
+                    artistId: artistId,
+                    title: videoTitle,
+                    artist: artistName,
+                    thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Add to history (remove if already exists to avoid duplicates)
+                history = history.filter(item => 
+                    !(item.id === videoId && item.artistId === artistId)
+                );
+                history.unshift(videoInfo);
+                
+                // Keep only the last 50 history items
+                if (history.length > 50) {
+                    history = history.slice(0, 50);
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('videoHistory', JSON.stringify(history));
+                
+                // Update history display if on history tab
+                if (document.querySelector('.tab-button[data-tab="history"]').classList.contains('active')) {
+                    updateHistoryDisplay();
+                }
+            }
+            
+            // Function to update history display
+            function updateHistoryDisplay() {
+                if (history.length === 0) {
+                    historyContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="far fa-clock"></i>
+                            <h3>No History Yet</h3>
+                            <p>Your watched videos will appear here</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyContainer.innerHTML = '';
+                history.forEach(video => {
+                    const videoCard = document.createElement('div');
+                    videoCard.className = 'video-card';
+                    videoCard.setAttribute('data-artist-id', video.artistId);
+                    videoCard.setAttribute('data-video-id', video.id);
+                    videoCard.innerHTML = `
+                        <div class="video-thumbnail">
+                            <img src="${video.thumbnail}" class="thumbnail-image" alt="${video.title}">
+                            <div class="play-button">
+                                <i class="fas fa-play"></i>
+                            </div>
+                            <iframe class="video-iframe" src="https://www.youtube.com/embed/${video.id}?enablejsapi=1" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <div class="video-text">
+                                <h4 class="video-title">${video.title}</h4>
+                                <p class="video-artist">${video.artist}</p>
+                                <small>Watched: ${new Date(video.timestamp).toLocaleString()}</small>
+                            </div>
+                        </div>
+                    `;
+                    historyContainer.appendChild(videoCard);
+                });
+                
+                // Set up event listeners for history cards
+                document.querySelectorAll('#history-container .video-thumbnail').forEach(thumbnail => {
+                    thumbnail.addEventListener('click', function() {
+                        const iframe = this.querySelector('.video-iframe');
+                        const thumbnailImg = this.querySelector('.thumbnail-image');
+                        
+                        // Show iframe and hide thumbnail
+                        iframe.style.display = 'block';
+                        thumbnailImg.style.display = 'none';
+                        this.querySelector('.play-button').style.display = 'none';
+                        
+                        // Force play the video
+                        iframe.src += "&autoplay=1";
+                        
+                        // Update timestamp in history and record view
+                        const videoCard = this.closest('.video-card');
+                        const artistId = videoCard.getAttribute('data-artist-id');
+                        const videoId = videoCard.getAttribute('data-video-id');
+                        const videoTitle = videoCard.querySelector('.video-title').textContent;
+                        const artistName = videoCard.querySelector('.video-artist').textContent.split(' • ')[0];
+                        const videoType = 'History'; // Default type for history items
+                        
+                        const videoIndex = history.findIndex(item => 
+                            item.id === videoId && item.artistId === artistId
+                        );
+                        
+                        if (videoIndex >= 0) {
+                            history[videoIndex].timestamp = new Date().toISOString();
+                            localStorage.setItem('videoHistory', JSON.stringify(history));
+                        }
+                        
+                        recordVideoView(artistId, videoId, videoTitle, artistName, videoType);
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
+
